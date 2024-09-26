@@ -1,4 +1,4 @@
-import { useState } from "react"
+
 import { mnemonicToSeed } from "bip39";
 import { derivePath } from "ed25519-hd-key";
 import { Keypair } from "@solana/web3.js";
@@ -22,7 +22,7 @@ async function SolanaAddressGenerator (mnemonic){
 
 async function EthereunAddressGenerator (mnemonic){
     const seed = await mnemonicToSeed(mnemonic);
-    const derivationPath = `m/44'/60'/${currentIndex}'/0'`;
+    const derivationPath = `m/44'/60'/${AccountNo}'/0'`;
     const hdNode = HDNodeWallet.fromSeed(seed);
     const child = hdNode.derivePath(derivationPath);
     const privateKey = child.privateKey;

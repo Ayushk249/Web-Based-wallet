@@ -1,11 +1,11 @@
 import React,{ useState } from 'react'
 import { SolanaAddressGenerator, EthereunAddressGenerator } from '../Addressgenerator'
 import {generateMnemonic} from 'bip39'
-
+import bs58 from "bs58";
 
 const HomeScreen = () => {
     const [mnemonic, setMnemonic] = useState('')
-    const [keyPairs, setKeyPairs] = useState([{ publicKey: "", privateKey: "" }])
+    const [keyPairs, setKeyPairs] = useState([])
 
 async function SolanaHandler() {
         
@@ -14,7 +14,7 @@ async function SolanaHandler() {
     setMnemonic(mnemomic)
 
     const keypair = await SolanaAddressGenerator(mnemomic)
-    console.log(keypair.publicKey.toBase58())
+    setKeyPairs([...keyPairs, {Blockchain: "Solana", publicKey: keypair.publicKey.toBase58(), privateKey: bs58.encode(keypair.secretKey)}])
 
     }
 
@@ -22,19 +22,18 @@ async function SolanaHandler() {
 async function EthereumHandler() {
         
     const mnemomic = await generateMnemonic()
-    console.log(mnemomic)
     setMnemonic(mnemomic)
 
     const wallet = await EthereunAddressGenerator(mnemomic)
-    console.log(wallet.address)
+    setKeyPairs([...keyPairs, {Blockchain: "Ethereum", publicKey: wallet.address, privateKey: wallet.privateKey}])
 
 }
 
 
   return (
     <>
-    <main>
-        <section className='home min-h-screen'>
+    <main className='home min-h-screen p-5 '>
+        <section>
             <div className='mx-28 pt-10'>
                 <h1 className='text-white text-6xl font-bold'>Ledger</h1>
                 <p className='text-slate-400 text-sm mt-5'>The best way to manage your crypto currencies</p>
@@ -55,6 +54,23 @@ async function EthereumHandler() {
 
             </div>
         </section>
+
+        <section>
+            <div className='mx-28 mt-10 transition-all duration-200'>
+                <h1 className='text-white text-2xl font-bold'>Generated Addresses</h1>
+                <div className=' grid grid-cols-1 gap-5 mt-5'>
+                    {keyPairs.map((keyPair) => (
+                        <div className=' bg-slate-800 p-5 rounded-lg mt-5'>
+                            <h1 className='text-white text-xl font-bold '>{keyPair.Blockchain+" wallet"}</h1>
+                            <p className='text-slate-400 text-base mt-5'>Public Key : {keyPair.publicKey}</p>
+                            <p className='text-slate-400 text-base mt-5'>Private Key : {"•".repeat(70)}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        
     </main>
     </>
   )
